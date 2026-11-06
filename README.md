@@ -33,6 +33,14 @@ brew install cmake ninja gperf python3 python-tk ccache qemu dtc libmagic wget o
 - Follow Linux instructions below to install dependencies and setup Zephyr workspace.
 
 ## Linux 
+- Install the STM32Cube Programmer. See [this](https://www.st.com/en/development-tools/stm32cubeprog.html) for instructions.
+
+- Add the programmer to your PATH. For example, if you installed it in `/opt/stm32cubeprog`, add the following line to your `~/.bashrc` or `~/.zshrc`:
+
+```bash 
+    export PATH=$PATH:STM32-Programmer/bin
+```
+
 - Using the handy makefile provided, you can setup all your tools by running the following: 
 
 ```bash
