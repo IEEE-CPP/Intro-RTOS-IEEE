@@ -47,7 +47,7 @@ Reading SensorManager::readSensorData() {
              "Failed to read BMP280 temperature.");
 
     // Convert sensor values to the appropriate units
-    sample.pressure_kpa = sensor_value_to_float(&pressure_val) / 1000.0f;
+    sample.pressure_kpa = sensor_value_to_float(&pressure_val);
     sample.temperature_c = sensor_value_to_float(&temp_val);
     sample.timestamp_ms = static_cast<uint64_t>(k_uptime_get());
 
