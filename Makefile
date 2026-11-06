@@ -1,16 +1,19 @@
 .PHONY: all clean build prog setup
 
 BOARD ?= nucleo_f411re
+BUILD_DIR ?= build
 PYTHON ?= $(abspath .venv/bin/python)
-HEX ?= $(abspath build/zephyr/zephyr.hex)
+HEX ?= $(abspath $(BUILD_DIR)/zephyr/zephyr.hex)
+CMAKE_ARGS ?=
 
-all: prog
+all: clean build
 
 clean:
-	rm -rf build
+	rm -rf "$(BUILD_DIR)"
 
 build:
-	cmake -S . -B build -G Ninja -DBOARD=$(BOARD) -DPython3_EXECUTABLE="$(PYTHON)" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build
+	cmake -S . -B "$(BUILD_DIR)" -G Ninja -DBOARD="$(BOARD)" -DPython3_EXECUTABLE="$(PYTHON)" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $(CMAKE_ARGS)
+	cmake --build "$(BUILD_DIR)"
 
 prog: 
 	@test -f "$(HEX)" || { echo "Build not found: $(HEX)" >&2; exit 1; }
