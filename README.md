@@ -1,4 +1,4 @@
-# IEEE Intro RTOS Blinky Example 
+# IEEE Intro RTOS IEEE Example 
 
 ## Windows
 - Have WSL installed and configured. See [this](https://learn.microsoft.com/en-us/windows/wsl/install) for instructions.
