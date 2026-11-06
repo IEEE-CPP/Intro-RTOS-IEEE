@@ -1,10 +1,10 @@
 &i2c1 {
-    status = "okay";
-    clock-frequency = <100000>;
+	status = "okay";
+	clock-frequency = <100000>;
 
-    bmp280: pressure@76 {
-        compatible = "bosch,bme280";
-        reg = <0x76>;
-        status = "okay";
-    };
+	bmp280: pressure@76 {
+		compatible = "bosch,bme280";
+		reg = <0x76>;
+		status = "okay";
+	};
 };

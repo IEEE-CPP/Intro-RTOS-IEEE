@@ -7,6 +7,7 @@ zephyr_base="$workspace_dir/zephyr"
 
 cd "$repo_root"
 git submodule update --init --recursive
+git submodule sync
 
 python3 -m venv "$repo_root/.venv"
 source "$repo_root/.venv/bin/activate"

@@ -1,47 +1,30 @@
-/*
- * Copyright (c) 2016 Intel Corporation
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+#include "SensorManager.hpp"
+#include "Reading.hpp"
 
-#include <stdio.h>
-#include <zephyr/drivers/gpio.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
-/* 1000 msec = 1 sec */
-#define SLEEP_TIME_MS 1000
+LOG_MODULE_REGISTER(main);
 
-/* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
+#define BMP280_NODE DT_NODELABEL(bmp280)
 
-/*
- * A build error on this line means your board is unsupported.
- * See the sample documentation for information on how to fix this.
- */
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+// Get the BMP280 device
+static const struct device *bmp280_dev =
+    DEVICE_DT_GET(BMP280_NODE);
 
 int main(void) {
-  int ret;
-  bool led_state = true;
+    static SensorManager sensorManager;
 
-  if (!gpio_is_ready_dt(&led)) {
-    return 0;
-  }
+    sensorManager.configure(bmp280_dev);
 
-  ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-  if (ret < 0) {
-    return 0;
-  }
-
-  while (1) {
-    ret = gpio_pin_toggle_dt(&led);
-    if (ret < 0) {
-      return 0;
+    while (true) {
+        const Reading reading = sensorManager.readSensorData();
+        LOG_INF("pressure=%.3f kPa | temperature=%.2f C | altitude=%.2f m",
+                static_cast<double>(reading.pressure_kpa),
+                static_cast<double>(reading.temperature_c),
+                static_cast<double>(reading.altitude_m));
+        k_sleep(K_SECONDS(1));
     }
-
-    led_state = !led_state;
-    printf("LED state: %s\n", led_state ? "ON" : "OFF");
-    k_msleep(SLEEP_TIME_MS);
-  }
-  return 0;
 }
