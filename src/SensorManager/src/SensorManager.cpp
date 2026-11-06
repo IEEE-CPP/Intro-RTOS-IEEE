@@ -8,10 +8,11 @@
 
 // Core Constants
 namespace {
-static constexpr float MinPressure = 30.0f;      // Minimum pressure in kPa
-static constexpr float MaxPressure = 110.0f;     // Maximum pressure in kPa
-static constexpr uint32_t ReferenceSamples = 10; // Ref Sample #
-static constexpr float AltitudeExponent = 0.19029495f; // 1 / 5.255
+    static constexpr float MinPressure = 30.0f;      // Minimum pressure in kPa
+    static constexpr float MaxPressure = 110.0f;     // Maximum pressure in kPa
+    static constexpr float AltitudeExponent = 0.19029495f; // 1 / 5.255
+    static constexpr float AtmosphericScaleHeight = 44330.0f; // Scale height for altitude calculation 
+    static constexpr uint32_t ReferenceSamples = 10; // Ref Sample #
 } // namespace
 
 LOG_MODULE_REGISTER(SensorManager);
@@ -19,7 +20,6 @@ LOG_MODULE_REGISTER(SensorManager);
 void SensorManager::configure(const struct device *bmp280_dev) {
     // Basic Assertions to ensure valid devices
     PW_CHECK(bmp280_dev != nullptr, "BMP280 device pointer is null.");
-
     PW_CHECK(device_is_ready(bmp280_dev), "BMP280 device is not ready.");
 
     this->m_bmp280_dev = bmp280_dev;
@@ -80,7 +80,13 @@ Reading SensorManager::readSensorData() {
 
     const float pressure_ratio = sample.pressure_kpa / this->m_ref_pressure_kpa;
     sample.altitude_m =
-        44330.0f * (1.0f - std::pow(pressure_ratio, AltitudeExponent));
+        AtmosphericScaleHeight * (1.0f - std::pow(pressure_ratio, AltitudeExponent));
 
+    if (!std::isfinite(sample.altitude_m)) {
+        sample.error = -ERANGE;
+        return sample;
+    }
+
+    sample.calibrated = true;
     return sample;
 }

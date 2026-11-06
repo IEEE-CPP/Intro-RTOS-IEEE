@@ -10,5 +10,11 @@ find_package(Zephyr REQUIRED HINTS "${ZEPHYR_BASE}")
 
 project(IEEE_Zephyr_Demo C CXX)
 
-add_subdirectory(SensorManager)
+target_sources(app PRIVATE src/main.cpp)
+
+add_subdirectory(src/SensorManager)
+add_subdirectory(src/SharedSensorData)
+add_subdirectory(src/Threading)
+add_subdirectory(src/StatusLed)
+
 

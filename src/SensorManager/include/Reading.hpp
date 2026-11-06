@@ -9,6 +9,10 @@ struct Reading {
     float altitude_m = 0.0f;
     uint64_t timestamp_ms = 0;
     uint32_t sequence = 0;
+
+    // Failure Handling
+    int error = 0;
+    bool calibrated = false;
 };
 
 #endif // READING_HPP
